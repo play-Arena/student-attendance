@@ -2,6 +2,7 @@
 
 const view = (() => {
   const DOMRefsMap = {};
+
   const generateTableHeaderTemplate = numberOfDays => {
     const dayIterator = new Array(numberOfDays).keys();
     const tplArray = [];
@@ -10,10 +11,36 @@ const view = (() => {
     }
     const daysHeaderTemplate = tplArray.join("");
     return `<tr>
-      <th class="name-col">Student Name</th>
-      ${daysHeaderTemplate}
-      <th class="missed-col">Days Missed-col</th>
-    </tr>`;
+                <th class="name-col">Student Name</th>
+                ${daysHeaderTemplate}
+                <th class="missed-col">Days Missed-col</th>
+            </tr>`;
+  };
+
+  const generateAttendanceTemplate = attendance => {
+    return attendance
+      .map((dayCheck, index) => {
+        return `<td class="attend-col"><input data-id=${index} type="checkbox" />
+                </td>`;
+      })
+      .join("");
+  };
+
+  const generateTableBodyTemplate = () => {
+    const students = controller.getNames();
+    const data = controller.getData();
+    return students
+      .map(student => {
+        const attendance = data[student];
+        const attendanceTpl = generateAttendanceTemplate(attendance);
+        return `<tr class="student" data-name=${student}>
+                    <td class="name-col">${student}</td>
+                    ${attendanceTpl}
+                    <td class="missed-col">0</td>
+                </tr>
+        `;
+      })
+      .join("");
   };
 
   const getDOMRefs = () => {
@@ -25,10 +52,17 @@ const view = (() => {
     const numberOfDays = controller.getTotalDays();
     getDOMRefs();
     DOMRefsMap["thead"]["tpl"] = generateTableHeaderTemplate(numberOfDays);
+    DOMRefsMap["tbody"]["tpl"] = generateTableBodyTemplate();
+  };
+
+  const appendTemplate = DOMRefArr => {
+    DOMRefArr.forEach(key => {
+      DOMRefsMap[key].ref.append(DOMRefsMap[key].tpl);
+    });
   };
 
   const renderView = () => {
-    DOMRefsMap["thead"].ref.append(DOMRefsMap["thead"].tpl);
+    appendTemplate(["thead", "tbody"]);
   };
 
   return {

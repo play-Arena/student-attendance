@@ -26,8 +26,13 @@ const controller = (() => {
     return model.getTotalDays();
   };
 
+  const getData = () => {
+    return model.getData();
+  };
+
   const prepareData = () => {
     let data = getDataFromLocalStore();
+    model.setTotalDays(12);
     if (!data || data.length === 0) {
       data = utils.getMockData(getTotalDays());
       setDataToLocalStore(data);
@@ -37,7 +42,11 @@ const controller = (() => {
 
   const modifyDataPoint = (name, dayIndex, isPresent) => {
     model.modifyData(name, dayIndex, isPresent);
-    setDataToLocalStore(model.getData());
+    setDataToLocalStore(getData());
+  };
+
+  const getStudentNames = () => {
+    return Object.keys(getData()).sort();
   };
 
   const initController = () => {
@@ -49,6 +58,8 @@ const controller = (() => {
   return {
     init: initController,
     changeAttendance: modifyDataPoint,
-    getTotalDays
+    getTotalDays,
+    getData,
+    getNames: getStudentNames
   };
 })();

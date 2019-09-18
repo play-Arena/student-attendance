@@ -2,7 +2,7 @@
 
 const model = (() => {
   let attendance = {};
-  const days = 12;
+  let totalDays = 0;
 
   const setData = data => {
     attendance = { ...data };
@@ -12,16 +12,16 @@ const model = (() => {
     setData(data);
   };
 
-  const getDataCount = () => {
-    return Object.keys(attendance).length;
-  };
-
   const modifyData = (studentName, index, datum) => {
     attendance[studentName][index] = datum;
   };
 
+  const setTotalDays = days => {
+    totalDays = days;
+  };
+
   const getTotalDays = () => {
-    return days;
+    return totalDays;
   };
 
   const getData = () => {
@@ -30,9 +30,9 @@ const model = (() => {
 
   return {
     init: initModel,
-    length: getDataCount,
     getData,
     modifyData,
-    getTotalDays
+    getTotalDays,
+    setTotalDays
   };
 })();
