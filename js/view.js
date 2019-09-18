@@ -20,7 +20,8 @@ const view = (() => {
   const generateAttendanceTemplate = attendance => {
     return attendance
       .map((dayCheck, index) => {
-        return `<td class="attend-col"><input data-id=${index} type="checkbox" />
+        const checked = dayCheck ? "checked" : "";
+        return `<td class="attend-col"><input data-id=${index} type="checkbox" ${checked} />
                 </td>`;
       })
       .join("");
