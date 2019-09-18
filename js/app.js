@@ -3,7 +3,6 @@ const initApp = () => {
 };
 
 $(() => {
-  console.log("Initing");
   initApp();
 });
 

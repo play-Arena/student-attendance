@@ -22,20 +22,33 @@ const controller = (() => {
     localStorage.setItem(localStorageKey, stringifiedData);
   };
 
+  const getTotalDays = () => {
+    return model.getTotalDays();
+  };
+
   const prepareData = () => {
     let data = getDataFromLocalStore();
     if (!data || data.length === 0) {
-      data = utils.getMockData();
+      data = utils.getMockData(getTotalDays());
       setDataToLocalStore(data);
     }
     return data;
   };
 
+  const modifyDataPoint = (name, dayIndex, isPresent) => {
+    model.modifyData(name, dayIndex, isPresent);
+    setDataToLocalStore(model.getData());
+  };
+
   const initController = () => {
     model.init(prepareData());
+    view.init();
+    view.render();
   };
 
   return {
-    init: initController
+    init: initController,
+    changeAttendance: modifyDataPoint,
+    getTotalDays
   };
 })();
