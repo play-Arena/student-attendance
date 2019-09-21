@@ -42,11 +42,20 @@ const controller = (() => {
 
   const modifyDataPoint = (name, dayIndex, isPresent) => {
     model.modifyData(name, dayIndex, isPresent);
+    view.updateCount(name, isPresent);
     setDataToLocalStore(getData());
   };
 
   const getStudentNames = () => {
     return Object.keys(getData()).sort();
+  };
+
+  const getAbsentDayCount = name => {
+    const data = getData();
+    const currentStudent = data[name];
+    return currentStudent.reduce((acc, curr) => {
+      return !curr ? ++acc : acc;
+    }, 0);
   };
 
   const initController = () => {
@@ -60,6 +69,7 @@ const controller = (() => {
     changeAttendance: modifyDataPoint,
     getTotalDays,
     getData,
-    getNames: getStudentNames
+    getNames: getStudentNames,
+    getMissedDays: getAbsentDayCount
   };
 })();

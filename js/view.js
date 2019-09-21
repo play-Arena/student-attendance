@@ -21,10 +21,25 @@ const view = (() => {
     return attendance
       .map((dayCheck, index) => {
         const checked = dayCheck ? "checked" : "";
-        return `<td class="attend-col"><input data-id=${index} type="checkbox" ${checked} />
+        return `<td class="attend-col"><input data-id="${index}" type="checkbox" ${checked} />
                 </td>`;
       })
       .join("");
+  };
+
+  const changeAttendance = ev => {
+    const clickedInput = $(ev.currentTarget);
+    const dayIndex = clickedInput.data("id");
+    const studentName = clickedInput.closest("tr").data("name");
+    !!clickedInput.attr("checked")
+      ? clickedInput.removeAttr("checked")
+      : clickedInput.attr("checked", "checked");
+    const isPresent = !!clickedInput.attr("checked");
+    controller.changeAttendance(studentName, dayIndex, isPresent);
+  };
+
+  const attachClickListenersonInputs = () => {
+    $("td.attend-col input").click(changeAttendance);
   };
 
   const generateTableBodyTemplate = () => {
@@ -34,10 +49,11 @@ const view = (() => {
       .map(student => {
         const attendance = data[student];
         const attendanceTpl = generateAttendanceTemplate(attendance);
-        return `<tr class="student" data-name=${student}>
+        const missedDays = controller.getMissedDays(student);
+        return `<tr class="student" data-name="${student}">
                     <td class="name-col">${student}</td>
                     ${attendanceTpl}
-                    <td class="missed-col">0</td>
+                    <td class="missed-col">${missedDays}</td>
                 </tr>
         `;
       })
@@ -64,10 +80,19 @@ const view = (() => {
 
   const renderView = () => {
     appendTemplate(["thead", "tbody"]);
+    attachClickListenersonInputs();
+  };
+
+  const updateAbsentCount = (name, isPresent) => {
+    const countDOM = $(`tr[data-name="${name}"] .missed-col`);
+    let currentCount = !!countDOM.text() ? +countDOM.text() : 0;
+    isPresent ? currentCount-- : currentCount++;
+    countDOM.text(currentCount);
   };
 
   return {
     init: initView,
-    render: renderView
+    render: renderView,
+    updateCount: updateAbsentCount
   };
 })();
